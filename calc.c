@@ -72,48 +72,90 @@ int timeToFinish()
    and, if found, adds the two numbers and replaces the addition subexpression 
    with the result ("(5+6)*8" becomes "(11)*8")--remember, you don't have
    to worry about associativity! */
-void *adder(void *arg)
+void* adder(void* arg)
 {
-    int bufferlen;
-    int value1, value2;
-    int startOffset, remainderOffset;
-    int i;
+	int bufferlen;
+	int value1, value2;
+	int startOffset, remainderOffset;
+	int i;
 
-    return NULL; /* remove this line to let the loop start*/
+	//new variables
+	int result;
+	char nString[50];
+	int changed = 0;
 
-    while (1) {
+	return NULL; /* remove this line to let the loop start*/
+
+	while (1)
+	{
 
 		/* Step 3: add mutual exclusion */
-	startOffset = remainderOffset = -1;
-	value1 = value2 = -1;
+		pthread_mutex_lock(&buffer_lock);
 
-	if (timeToFinish()) {
-	    return NULL;
+		startOffset = remainderOffset = - 1;
+		value1 = value2 = -1;
+
+		if (timeToFinish())
+		{
+			return NULL;
+		}
+
+		/* storing this prevents having to recalculate it in the loop */
+		bufferlen = strlen(buffer);
+
+		/* Step 2: implement adder */
+		for (i = 0; i < bufferlen; i++)
+		{
+			// do we have value1 already?  If not, is this a "naked" number?
+			// if we do, is the next character after it a '+'?
+			// if so, is the next one after the sign a "naked" number?
+			if (isNumeric(buffer[i])) // 400+30
+			{
+				startOffset = i;
+				value1 = string2int(buffer[i]); //400
+				while (isNumeric(buffer[i + 1]))// move until hit +
+				{
+					i++;
+				}
+				if (buffer[i] != '+' || !isNumeric(buffer[i + 1])) // checks if its naked
+				{
+					continue;
+				}
+
+				value2 = string2int(buffer[i + 1]); // gets next value
+				result = value1 + value2;
+
+				// once we have value1, value2 and start and end offsets of the
+				// expression in buffer, replace it with v1+v2
+				do {
+					i++;
+
+				} while (isNumeric(buffer[i]));
+				remainderOffset = i;
+				int2string(result, nString);
+
+				strcpy(buffer[startOffset], nString);
+				strcpy(buffer[startOffset + strlen(nString)], buffer[remainderOffset]);
+
+				bufferlen = strlen(buffer);
+				i = remainderOffset - 1;
+
+				changed = 1;
+				num_ops++;
+			}
+		}
+
+		// something missing?
+		/* Step 3: free the lock */
+		pthread_mutex_unlock(&buffer_lock);
+		/* Step 6: check progress */
+		sem_wait(&progress_lock);
+		progress.add = changed ? 2 : 1;
+		sem_post(&progress_lock);
+
+		/* Step 5: let others play */
+		shed_yield();
 	}
-
-	/* storing this prevents having to recalculate it in the loop */
-	bufferlen = strlen(buffer);
-
-	/* Step 2: implement adder */
-	for (i = 0; i < bufferlen; i++) {
-	    // do we have value1 already?  If not, is this a "naked" number?
-	    // if we do, is the next character after it a '+'?
-	    // if so, is the next one after the sign a "naked" number?
-
-	    // once we have value1, value2 and start and end offsets of the
-	    // expression in buffer, replace it with v1+v2
-	}
-
-	// something missing?
-	/* Step 3: free the lock */
-
-
-	/* Step 6: check progress */
-
-
-	/* Step 5: let others play */
-	
-    }
 }
 
 /* Looks for a multiplication symbol "*" surrounded by two numbers, e.g.

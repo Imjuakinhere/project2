@@ -120,10 +120,21 @@ Q1: At this point, your solution does not contain any synchronization or
 mutual exclusion.  Give an example of and explain a possible
 synchronization error that could occur in this code. Be specific.
 
+because we do not have any mutual exclution it mean that every one is 
+competing to who get to write first and would probably cause wrong increment
+it's know as a race condition.
+
 Q2: Suppose we implement correct synchronization and mutual exclusion
 for all of the threads.  If our three functions were to operate on all
 expression in the buffer at once (not just the first expression), would
-the program generate incorrect output?  Why or why not?
+the program generate incorrect output?  Why or why not? 
+
+if everything was running at the same time so depending on witch one called
+mutex_lock first then it will have the floor so evey other operation will 
+have to wait until it is done and it frees the mutex_unlock so the program 
+should give the right result since they will all do mutex_lock and mutex_unlock.
+
+
 
 
 Step 3: Critical Sections
@@ -148,13 +159,20 @@ synchronization errors (e.g., race conditions, data corruption).
 Q3: For this step, what specific data structure(s) need(s) protection?
 Why?
 
+buffer need protection since were modifing values and romving things and
+we dont want it to be effected until the function is in is done.
+
 Q4: What would happen if you had a busy-wait within one of your critical
 sections?  What if it is a loop with sched_yield()?
+
+
 
 Q5: Why is it sometimes necessary to use the non-blocking
 pthread_mutex_trylock() instead of the blocking pthread_mutex_lock()?
 Think for example of a program that needs to acquire multiple mutexes at
 the same time.
+
+
 
 
 Step 4: Accounting

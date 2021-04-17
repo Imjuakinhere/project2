@@ -270,13 +270,7 @@ void *degrouper(void *arg)
 			// check for '(' followed by a naked number followed by ')'
 			// remove ')' by shifting the tail end of the expression
 			// remove '(' by shifting the beginning of the expression
-			if(!isNumeric(buffer[i]) && buffer[i] == '(')
-			{
-				
-			
-				changed = 1;
-				num_ops++;
-			}
+
 		}
 
 		// something missing?

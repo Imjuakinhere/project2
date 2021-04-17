@@ -90,7 +90,7 @@ void* adder(void* arg)
 	{
 
 		/* Step 3: add mutual exclusion */
-		pthread_mutex_lock(&buffer_lock);
+		//pthread_mutex_lock(&buffer_lock);
 
 		startOffset = remainderOffset = - 1;
 		value1 = value2 = -1;
@@ -147,14 +147,14 @@ void* adder(void* arg)
 
 		// something missing?
 		/* Step 3: free the lock */
-		pthread_mutex_unlock(&buffer_lock);
+		//pthread_mutex_unlock(&buffer_lock);
 		/* Step 6: check progress */
-		sem_wait(&progress_lock);
-		progress.add = changed ? 2 : 1;
-		sem_post(&progress_lock);
+		//sem_wait(&progress_lock);
+		//progress.add = changed ? 2 : 1;
+		//sem_post(&progress_lock);
 
 		/* Step 5: let others play */
-		shed_yield();
+		//shed_yield();
 	}
 }
 

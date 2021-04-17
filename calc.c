@@ -433,7 +433,7 @@ int smp3_main(int argc, char **argv)
 	pthread_detach(adderThread);
 	pthread_detach(degrouperThread);
 	pthread_detach(sentinelThread);
-	pthread_detach(readerThread);
+	//pthread_detach(readerThread);
 	/* Step 1: we have to join on the ________ thread. */
 	// pthread_join(____, NULL);
 

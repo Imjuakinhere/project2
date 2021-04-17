@@ -427,7 +427,7 @@ int smp3_main(int argc, char **argv)
 	for processes. A call to pthread_join blocks the calling thread until 
 	the thread with identifier equal to the first argument terminates.*/
 	// If you join do not detach.
-	pthread_join(readerThread, NULL);
+	
 
 	pthread_detach(multiplierThread);
 	pthread_detach(adderThread);
@@ -436,6 +436,7 @@ int smp3_main(int argc, char **argv)
 	//pthread_detach(readerThread);
 	/* Step 1: we have to join on the ________ thread. */
 	// pthread_join(____, NULL);
+	pthread_join(readerThread, NULL);
 
 	/* everything is finished, print out the number of operations performed */
 	fprintf(stdout, "Performed a total of %d operations\n", num_ops);

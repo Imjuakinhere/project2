@@ -510,6 +510,7 @@ void *reader(void *arg)
 		}
 
 		/* Step 3: add mutual exclusion */
+		pthread_mutex_lock(&buffer_lock);
 
 		/* we can add another expression now */
 		strcat(buffer, tBuffer);

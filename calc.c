@@ -1,6 +1,5 @@
 /* Project 2 - Multithreaded calculator */
-// Name: Jose Aguilar
-// Partner: Jonathon Jacobson
+// Name: Joaquin Garcia
 
 #include "calc.h"
 
@@ -75,8 +74,9 @@ void *adder(void *arg)
 	int value1, value2;
 	int startOffset, remainderOffset;
 	char nstring[50];
-	int changed = 0;
+	int Mark = 0;
 	int i;
+	int result;
 
 	//return NULL; /* remove this line to let the loop start*/
 
@@ -132,7 +132,7 @@ void *adder(void *arg)
 					// once we have value1, value2 and start and end offsets of the
 					// expression in buffer, replace it with v1+v2
 
-					int result = value1 + value2;
+					result = value1 + value2;
 					//we keep incremeting the index till we reach the true end of the array
 					//or the next operation
 					do
@@ -156,7 +156,7 @@ void *adder(void *arg)
 
 					bufferlen = bufferlen - (remainderOffset - 1 - startOffset);
 					i = startOffset - 1;
-					changed = 1;
+					Mark = 1;
 					num_ops++;
 				}
 			}
@@ -166,9 +166,9 @@ void *adder(void *arg)
 			pthread_mutex_unlock(&buffer_lock);
 			/* Step 6: check progress */
 			sem_wait(&progress_lock);
-			progress.add = changed ? 1 : 2;
+			progress.add = Mark ? 1 : 2;
 			sem_post(&progress_lock);
-			changed = 0;
+			Mark = 0;
 			/* Step 5: let others play */
 			sched_yield();
 		}
@@ -189,8 +189,9 @@ void *multiplier(void *arg)
 	int value1, value2;
 	int startOffset, remainderOffset;
 	int i;
-	int changed = 0;
+	int Mark = 0;
 	char nstring[50];
+	int result;
 
 	//return NULL; /* remove this line */
 
@@ -246,7 +247,7 @@ void *multiplier(void *arg)
 					// once we have value1, value2 and start and end offsets of the
 					// expression in buffer, replace it with v1+v2
 
-					int result = value1 * value2;
+					 result = value1 * value2;
 					//we keep incremeting the index till we reach the true end of the array
 					//or the next operation
 					do
@@ -265,7 +266,7 @@ void *multiplier(void *arg)
 
 					startOffset = 0;
 					remainderOffset = 0;
-					changed = 1;
+					Mark = 1;
 					num_ops++;
 				}
 			}
@@ -275,9 +276,9 @@ void *multiplier(void *arg)
 			pthread_mutex_unlock(&buffer_lock);
 			/* Step 6: check progress */
 			sem_wait(&progress_lock);
-			progress.mult = changed ? 1 : 2;
+			progress.mult = Mark ? 1 : 2;
 			sem_post(&progress_lock);
-			changed = 0;
+			Mark = 0;
 			/* Step 5: let others play */
 			sched_yield();
 		}
@@ -295,7 +296,7 @@ void *degrouper(void *arg)
 {
 	int startOffset, remainderOffset;
 	int bufferlen;
-	int changed;
+	int Mark;
 	int i;
 
 	//return NULL; /* remove this line */
@@ -356,7 +357,7 @@ void *degrouper(void *arg)
 
 						strcpy(buffer + remainderOffset - 1, buffer + (remainderOffset));
 						bufferlen = bufferlen - 2;
-						changed = 1;
+						Mark = 1;
 						num_ops++;
 						i = -1;
 					}
@@ -373,9 +374,9 @@ void *degrouper(void *arg)
 
 			/* Step 6: check progress */
 			sem_wait(&progress_lock);
-			progress.group = changed ? 1 : 2; // 1 means changed, 2 didn't changed;
+			progress.group = Mark ? 1 : 2; // 1 means changed, 2 didn't changed;
 			sem_post(&progress_lock);
-			changed = 0;
+			Mark = 0;
 			/* Step 5: let others play */
 			sched_yield();
 		}

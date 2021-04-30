@@ -1,5 +1,5 @@
  /* Project 2 - Multithreaded calculator */
- // Name: Sergio Hinojosa & Javier Suarez-Moreno
+ // Name: Joaquin Garcia
 
  #include "calc.h";
 

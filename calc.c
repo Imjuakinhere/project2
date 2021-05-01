@@ -74,7 +74,7 @@ void *adder(void *arg)
 	int value1, value2;
 	int startOffset, remainderOffset;
 	char nstring[50];
-	int changed;
+	int affected;
 	int i;
 
 	//return NULL; /* remove this line to let the loop start*/
@@ -155,7 +155,7 @@ void *adder(void *arg)
 
 					bufferlen = bufferlen - (remainderOffset - 1 - startOffset);
 					i = startOffset - 1;
-					changed = 1;
+					affected = 1;
 					num_ops++;
 				}
 			}
@@ -165,9 +165,9 @@ void *adder(void *arg)
 			pthread_mutex_unlock(&buffer_lock);
 			/* Step 6: check progress */
 			sem_wait(&progress_lock);
-			progress.add = changed ? 1 : 2;
+			progress.add = affected ? 1 : 2;
 			sem_post(&progress_lock);
-			changed = 0;
+			affected = 0;
 			/* Step 5: let others play */
 			sched_yield();
 		}
@@ -188,7 +188,7 @@ void *multiplier(void *arg)
 	int value1, value2;
 	int startOffset, remainderOffset;
 	int i;
-	int changed;
+	int affected;
 	char nstring[50];
 
 	//return NULL; /* remove this line */
@@ -264,7 +264,7 @@ void *multiplier(void *arg)
 
 					startOffset = 0;
 					remainderOffset = 0;
-					changed = 1;
+					affected = 1;
 					num_ops++;
 				}
 			}
@@ -272,12 +272,12 @@ void *multiplier(void *arg)
 			// something missing?
 			/* Step 3: free the lock */
 			sem_wait(&progress_lock);
-			progress.mult = changed ? 1 : 2;
+			progress.mult = affected ? 1 : 2;
 
 			sem_post(&progress_lock);
 			/* Step 6: check progress */
 			pthread_mutex_unlock(&buffer_lock);
-			changed = 0;
+			affected = 0;
 			/* Step 5: let others play */
 			sched_yield();
 		}
@@ -295,7 +295,7 @@ void *degrouper(void *arg)
 {
 	int startOffset, remainderOffset;
 	int bufferlen;
-	int changed;
+	int affected;
 	int i;
 
 	//return NULL; /* remove this line */
@@ -355,7 +355,7 @@ void *degrouper(void *arg)
 
 						strcpy(buffer + remainderOffset - 1, buffer + (remainderOffset));
 						bufferlen = bufferlen - 2;
-						changed = 1;
+						affected = 1;
 						num_ops++;
 						i = -1;
 					}
@@ -372,7 +372,7 @@ void *degrouper(void *arg)
 
 			/* Step 6: check progress */
 			sem_wait(&progress_lock);
-			progress.group = changed ? 1 : 2; // 1 means changed, 2 didn't changed;
+			progress.group = affected ? 1 : 2; // 1 means affected, 2 didn't affected;
 			sem_post(&progress_lock);
 			/* Step 5: let others play */
 			sched_yield();

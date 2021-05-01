@@ -122,7 +122,7 @@ synchronization error that could occur in this code. Be specific.
 
 because we do not have any mutual exclution it mean that every one is 
 competing to who get to write first and would probably cause wrong increment
-it's know as a race condition.
+it's know as a race condition. witch will cause the num_ops to be incorrect.
 
 Q2: Suppose we implement correct synchronization and mutual exclusion
 for all of the threads.  If our three functions were to operate on all
@@ -165,13 +165,21 @@ we dont want it to be effected until the function is in is done.
 Q4: What would happen if you had a busy-wait within one of your critical
 sections?  What if it is a loop with sched_yield()?
 
-
+Busy-wait within the critical section will be a waste for the CPU cycles
+because nothing is being done just to wait. so if this happens within yeild loop
+the sched_yeild would make it do what the function asked for. it yeilds the processor
+to make way for a new thread to take place and more the one before to the end 
+since is static.
 
 Q5: Why is it sometimes necessary to use the non-blocking
 pthread_mutex_trylock() instead of the blocking pthread_mutex_lock()?
 Think for example of a program that needs to acquire multiple mutexes at
 the same time.
 
+trylock() it tries to lock to aquire ownership of the mutex whitout it 
+bloicking the calling thread.If by any chance it is already locked by another thread then 
+it will reuturn and error saying it's busy it benefits use to use trylock() because 
+it wont deadlock everything due to other resources being blocked.
 
 
 
@@ -188,6 +196,10 @@ this variable is free from race conditions.
 Q6: Is a new mutex, separate from what you have in Step 3, required to
 correctly implement this behavior?  Why or why not?
 
+It does because a mutex must implement a behaviour that will protect the shared data
+between fucntionstheir purpose is to make sure the variables can't be accessed synchronously
+by functions.
+
 
 Step 5: Performance
 -------------------
@@ -200,11 +212,22 @@ sched_yield() calls at the appropriate place inside these loops.
 Q7: Why is it important, even on single-processor machines, to keep the
 critical sections as small as possible?
 
+By Amdahl’s law, it states that if P is the proportion of a program 
+that can be made parallel, and (1 − P) is the proportion that cannot 
+be parallelized, then the maximum speedup that can be achieved by using
+ N processors is S(N) = 1 / ((1-P) + P/N).
+
 Q8: Why is spin-waiting without yielding usually inefficient?
+
+It waste resources and time because the CPU cycle is just piling up
+and since we don't have a yielding to triger the reliquish the processor
+it will just go on forever.
 
 Q9: When might spin-waiting without yielding or blocking actually be
 *more* efficient?
 
+more efficient when we want to see if anything changes in the loop or 
+when we need to sleep the program.
 
 Step 6: Monitoring Progress
 ---------------------------
@@ -250,6 +273,11 @@ one of them fails.
 Q10:  You have to supply an initial value when creating a semaphore.
 Which value should you use to mimic the default functionality of a mutex?
 What would happen if you specified a larger value?
+
+The # that was used to initialize the semaphore is the amount of processes 
+i want to be accessing resource. we only want one thread to access our processor
+at a time.So depending how many time we want the data be munipulated then that would
+be the number we will set it too.
 
 
 Testing

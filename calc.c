@@ -504,6 +504,7 @@ void *reader(void *arg)
 		while (free < NewSize)
 		{
 			// spinwaiting TO DO
+			sched_yield();
 		}
 
 		/* Step 3: add mutual exclusion */

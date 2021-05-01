@@ -342,8 +342,7 @@ void *degrouper(void *arg)
 					do
 					{
 						i++;
-					} while (isNumeric(buffer[i]));
-					;
+					} while (isNumeric(buffer[i]));;
 
 					//we find the ) and remove both
 					if (buffer[i] == ')')
@@ -480,29 +479,29 @@ void *reader(void *arg)
 	while (1)
 	{
 		char tBuffer[100];
-		int currentlen;
-		int newlen;
+		int Orginalsize;
+		int NewSize;
 		int free;
 
 		fgets(tBuffer, sizeof(tBuffer), stdin);
 
 		/* Sychronization bugs in remainder of function need to be fixed */
 
-		newlen = strlen(tBuffer);
-		currentlen = strlen(buffer);
+		NewSize = strlen(tBuffer);
+		Orginalsize = strlen(buffer);
 
 		/* if tBuffer comes back with a newline from fgets, remove it */
-		if (tBuffer[newlen - 1] == '\n')
+		if (tBuffer[NewSize - 1] == '\n')
 		{
 			/* shift null terminator left */
-			tBuffer[newlen - 1] = tBuffer[newlen];
-			newlen--;
+			tBuffer[NewSize - 1] = tBuffer[NewSize];
+			NewSize--;
 		}
 
 		/* -1 for null terminator, -1 for ; separator */
-		free = sizeof(buffer) - currentlen - 2;
+		free = sizeof(buffer) - Orginalsize - 2;
 
-		while (free < newlen)
+		while (free < NewSize)
 		{
 			// spinwaiting TO DO
 		}

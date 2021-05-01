@@ -165,7 +165,7 @@ void *adder(void *arg)
 			pthread_mutex_unlock(&buffer_lock);
 			/* Step 6: check progress */
 			sem_wait(&progress_lock);
-			progress.add = affected ? 1 : 2;
+			progress.add = affected ? 1 : 0;
 			sem_post(&progress_lock);
 			affected = 0;
 			/* Step 5: let others play */
@@ -272,7 +272,7 @@ void *multiplier(void *arg)
 			// something missing?
 			/* Step 3: free the lock */
 			sem_wait(&progress_lock);
-			progress.mult = affected ? 1 : 2;
+			progress.mult = affected ? 1 : 0;
 
 			sem_post(&progress_lock);
 			/* Step 6: check progress */
@@ -372,7 +372,7 @@ void *degrouper(void *arg)
 
 			/* Step 6: check progress */
 			sem_wait(&progress_lock);
-			progress.group = affected ? 1 : 2; // 1 means affected, 2 didn't affected;
+			progress.group = affected ? 1 : 0; // 1 means affected, 2 didn't affected;
 			sem_post(&progress_lock);
 			/* Step 5: let others play */
 			sched_yield();
@@ -504,7 +504,7 @@ void *reader(void *arg)
 		while (free < NewSize)
 		{
 			// spinwaiting TO DO
-			sched_yield();
+			
 		}
 
 		/* Step 3: add mutual exclusion */
